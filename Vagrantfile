@@ -4,14 +4,15 @@
 # alation Vagrant file to spin up multiple machines
 # Maintainer Michael Vilain [201707.17]
 
-$server_script = <<EOFHAPROXY
+$server_script = <<EOFHAPROXYINSTALL
 	echo "provisioning haproxy"
 	yum update -y
 	yum install -y haproxy ${TOOLS}
 	cd /etc/haproxy
 	/bin/mv haproxy.cfg haproxy.cfg.orig
-	cat <<EOFHACONFIG
-#https://www.howtoforge.com/tutorial/how-to-setup-haproxy-as-load-balancer-for-nginx-on-centos-7/
+	cat <<EOFHACONFIG > haproxy.cfg
+# https://www.howtoforge.com/tutorial/how-to-setup-haproxy-as-load-balancer-for-nginx-on-centos-7/
+# https://serversforhackers.com/c/load-balancing-with-haproxy
 #---------------------------------------------------------------------
 # Global settings
 #---------------------------------------------------------------------
@@ -60,7 +61,7 @@ listen haproxy3-monitoring *:8080                #Haproxy Monitoring run on port
     stats enable
     stats show-legends
     stats refresh 5s
-    stats uri /stats                             #URL for HAProxy monitoring
+    stats uri /stats                            #URL for HAProxy monitoring
     stats realm Haproxy\ Statistics
     stats auth howtoforge:howtoforge            #User and Password for login to the monitoring dashboard
     stats admin if TRUE
@@ -73,33 +74,128 @@ frontend main
     bind *:80
     option http-server-close
     option forwardfor
-    default_backend app-main
+    default_backend nodes
  
 #---------------------------------------------------------------------
 # BackEnd roundrobin as balance algorithm
 #---------------------------------------------------------------------
-backend app-main
-    balance roundrobin                                   #Balance algorithm
-    option httpchk HEAD / HTTP/1.1\r\nHost:\ localhost   #Check the server application is up and healty - 200 status code
-    server web1 192.168.10.101:80 check                  # web1 
+backend nodes
+    balance roundrobin                                   # Balance algorithm
+    option httpchk HEAD / HTTP/1.1\\r\\nHost:localhost   #Check the server application is up and healty - 200 status code
     server web2 192.168.10.102:80 check                  # web2
+    server web1 192.168.10.101:80 check                  # web1 
     server web3 192.168.10.103:80 check                  # web3
 
-	HACONFIG
+EOFHACONFIG
 
-	sed -i.orig -e 's/#$ModLoad imudp/$ModLoad imudp/' -e 's/#$UDPServerRun 514/$UDPServerRun 514/' /etc/rsyslog.conf
-	echo '$UDPServerAddress 127.0.0.1' /etc/rsyslog.conf
+	cd /etc
+	/bin/mv rsyslog.conf rsyslog.conf.orig
+	cat <<'EOFRSYSLOG1' >rsyslog.conf	# turn off parameter substitution
+# rsyslog configuration file
 
-	cat <<RSYSLOG > /etc/rsyslog.d/haproxy.conf
-	local2.=info     /var/log/haproxy-access.log    #For Access Log
-	local2.notice    /var/log/haproxy-info.log      #For Service Info - Backend, loadbalancer
-	RSYSLOG
+# For more information see /usr/share/doc/rsyslog-*/rsyslog_conf.html
+# If you experience problems, see http://www.rsyslog.com/doc/troubleshoot.html
+
+#### MODULES ####
+
+# The imjournal module bellow is now used as a message source instead of imuxsock.
+$ModLoad imuxsock # provides support for local system logging (e.g. via logger command)
+$ModLoad imjournal # provides access to the systemd journal
+#$ModLoad imklog # reads kernel messages (the same are read from journald)
+#$ModLoad immark  # provides --MARK-- message capability
+
+# Provides UDP syslog reception
+$ModLoad imudp
+$UDPServerRun 514
+$UDPServerAddress 127.0.0.1
+
+# Provides TCP syslog reception
+#$ModLoad imtcp
+#$InputTCPServerRun 514
+
+
+#### GLOBAL DIRECTIVES ####
+
+# Where to place auxiliary files
+$WorkDirectory /var/lib/rsyslog
+
+# Use default timestamp format
+$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+
+# File syncing capability is disabled by default. This feature is usually not required,
+# not useful and an extreme performance hit
+#$ActionFileEnableSync on
+
+# Include all config files in /etc/rsyslog.d/
+$IncludeConfig /etc/rsyslog.d/*.conf
+
+# Turn off message reception via local log socket;
+# local messages are retrieved through imjournal now.
+$OmitLocalLogging on
+
+# File to store the position in the journal
+$IMJournalStateFile imjournal.state
+
+
+#### RULES ####
+
+# Log all kernel messages to the console.
+# Logging much else clutters up the screen.
+#kern.*                                                 /dev/console
+
+# Log anything (except mail) of level info or higher.
+# Don't log private authentication messages!
+*.info;mail.none;authpriv.none;cron.none                /var/log/messages
+
+# The authpriv file has restricted access.
+authpriv.*                                              /var/log/secure
+
+# Log all the mail messages in one place.
+mail.*                                                  -/var/log/maillog
+
+
+# Log cron stuff
+cron.*                                                  /var/log/cron
+
+# Everybody gets emergency messages
+*.emerg                                                 :omusrmsg:*
+
+# Save news errors of level crit and higher in a special file.
+uucp,news.crit                                          /var/log/spooler
+
+# Save boot messages also to boot.log
+local7.*                                                /var/log/boot.log
+
+
+# ### begin forwarding rule ###
+# The statement between the begin ... end define a SINGLE forwarding
+# rule. They belong together, do NOT split them. If you create multiple
+# forwarding rules, duplicate the whole block!
+# Remote Logging (we use TCP for reliable delivery)
+#
+# An on-disk queue is created for this action. If the remote host is
+# down, messages are spooled to disk and sent when it is up again.
+#$ActionQueueFileName fwdRule1 # unique name prefix for spool files
+#$ActionQueueMaxDiskSpace 1g   # 1gb space limit (use as much as possible)
+#$ActionQueueSaveOnShutdown on # save messages to disk on shutdown
+#$ActionQueueType LinkedList   # run asynchronously
+#$ActionResumeRetryCount -1    # infinite retries if host is down
+# remote host is: name/ip:port, e.g. 192.168.0.1:514, port optional
+#*.* @@remote-host:514
+# ### end of the forwarding rule ###
+EOFRSYSLOG1
+
+	echo '$UDPServerAddress 127.0.0.1' >>/etc/rsyslog.conf
+	cat <<EOFRSYSLOG2 > /etc/rsyslog.d/haproxy.conf
+local2.=info     /var/log/haproxy-access.log    #For Access Log
+local2.notice    /var/log/haproxy-info.log      #For Service Info - Backend, loadbalancer
+EOFRSYSLOG2
 	systemctl restart rsyslog
 
 	systemctl start haproxy
 	systemctl enable haproxy
 
-EOFHAPROXY
+EOFHAPROXYINSTALL
 
 $config_httpd = <<EOFCLIENTHTTPD
 	echo "providing apache"
@@ -115,8 +211,6 @@ $config_nginx = <<EOFCLIENTNGINX
 	echo "provisioning nginx"
 	yum install -y epel-release
 	yum install -y nginx
-#	setenforce 0
-#	systemctl stop firewalld
 	systemctl start nginx
 	systemctl enable nginx
 
@@ -134,7 +228,7 @@ Vagrant.configure(2) do | config |
 		haproxy.vm.box = "centos/7"
 
 		#haproxy.vm.network "forwarded_port", guest: 80, host: 8080
-		haproxy.vm.network "public_network", ip: "192.168.10.100"
+		haproxy.vm.network "private_network", ip: "192.168.10.100"
 
 		#haproxy.vm.synced_folder "haproxy", "/vagrant"
 
