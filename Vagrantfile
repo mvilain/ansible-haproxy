@@ -25,10 +25,10 @@ global
     user        haproxy             #Haproxy running under user and group "haproxy"
     group       haproxy
     daemon
- 
+
     # turn on stats unix socket
     stats socket /var/lib/haproxy/stats
- 
+
 #---------------------------------------------------------------------
 # common defaults that all the 'listen' and 'backend' sections will
 # use if not designated in their block
@@ -50,7 +50,7 @@ defaults
     timeout http-keep-alive 10s
     timeout check           10s
     maxconn                 3000
- 
+
 #---------------------------------------------------------------------
 #HAProxy Monitoring Config
 #---------------------------------------------------------------------
@@ -65,8 +65,8 @@ listen haproxy3-monitoring *:8080                #Haproxy Monitoring run on port
     stats realm Haproxy\ Statistics
     stats auth howtoforge:howtoforge            #User and Password for login to the monitoring dashboard
     stats admin if TRUE
-    default_backend app-main                    #This is optionally for monitoring backend
- 
+    default_backend nodes                    #This is optionally for monitoring backend
+
 #---------------------------------------------------------------------
 # FrontEnd Configuration
 #---------------------------------------------------------------------
@@ -75,22 +75,22 @@ frontend main
     option http-server-close
     option forwardfor
     default_backend nodes
- 
+
 #---------------------------------------------------------------------
 # BackEnd roundrobin as balance algorithm
 #---------------------------------------------------------------------
 backend nodes
     balance roundrobin                                   # Balance algorithm
     option httpchk HEAD / HTTP/1.1\\r\\nHost:localhost   #Check the server application is up and healty - 200 status code
+    server web1 192.168.10.101:80 check                  # web1
     server web2 192.168.10.102:80 check                  # web2
-    server web1 192.168.10.101:80 check                  # web1 
     server web3 192.168.10.103:80 check                  # web3
 
 EOFHACONFIG
 
 	cd /etc
 	/bin/mv rsyslog.conf rsyslog.conf.orig
-	cat <<EOFRSYSLOG1 >rsyslog.conf
+	cat <<'EOFRSYSLOG1' >rsyslog.conf
 # rsyslog configuration file
 
 # For more information see /usr/share/doc/rsyslog-*/rsyslog_conf.html
@@ -185,15 +185,12 @@ local7.*                                                /var/log/boot.log
 # ### end of the forwarding rule ###
 EOFRSYSLOG1
 
-	echo '$UDPServerAddress 127.0.0.1' >>/etc/rsyslog.conf
 	cat <<EOFRSYSLOG2 > /etc/rsyslog.d/haproxy.conf
 local2.=info     /var/log/haproxy-access.log    #For Access Log
 local2.notice    /var/log/haproxy-info.log      #For Service Info - Backend, loadbalancer
 EOFRSYSLOG2
 	systemctl restart rsyslog
-
 	systemctl start haproxy
-	systemctl enable haproxy
 
 EOFHAPROXYINSTALL
 
@@ -202,6 +199,7 @@ $config_httpd = <<EOFCLIENTHTTPD
 	yum update -y
 	yum install -y httpd
 	sed -i.orig -s "s/^Listen 80/Listen 0.0.0.0:80/" /etc/httpd/conf/httpd.conf
+	echo "<h1>Welcome to web1</h1>" > /var/www/html/index.html
 	systemctl start httpd
 	systemctl enable httpd
 
