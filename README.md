@@ -19,12 +19,11 @@ These notes are for the end-user of the demo and supply directions on how to set
 mkdir -p ~/alation 
 ```
 
-4. Download the [Vagrant file](https://raw.githubusercontent.com/mvilain/alation/Vagrantfile) for the demo from github into the alation directory
-```
-curl https://raw.githubusercontent.com/portworx/demo/master/Vagrantfile > Vagrantfile
-```
+4. Clone the repository with the Vagrant file into the alation directory
 
-
+```
+git clone https://github.com/mvilain/alation.git
+```
 
 ## Running the Demo
 
@@ -58,17 +57,17 @@ and all the VMs will stop.
 
 ```
 $ vagrant halt
+==> haproxy: Attempting graceful shutdown of VM...
 ==> web3: Attempting graceful shutdown of VM...
 ==> web2: Attempting graceful shutdown of VM...
 ==> web1: Attempting graceful shutdown of VM...
-==> haproxy: Attempting graceful shutdown of VM...
 admin:demo root# vagrant status
 Current machine states:
 
-haproxy                poweroff (virtualbox)
 web1                   poweroff (virtualbox)
 web2                   poweroff (virtualbox)
 web3                   poweroff (virtualbox)
+haproxy                poweroff (virtualbox)
 This environment represents multiple VMs. The VMs are all listed
 above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
