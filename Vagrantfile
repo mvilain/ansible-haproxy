@@ -90,7 +90,7 @@ EOFHACONFIG
 
 	cd /etc
 	/bin/mv rsyslog.conf rsyslog.conf.orig
-	cat <<'EOFRSYSLOG1' >rsyslog.conf	# turn off parameter substitution
+	cat <<EOFRSYSLOG1 >rsyslog.conf
 # rsyslog configuration file
 
 # For more information see /usr/share/doc/rsyslog-*/rsyslog_conf.html
@@ -99,42 +99,42 @@ EOFHACONFIG
 #### MODULES ####
 
 # The imjournal module bellow is now used as a message source instead of imuxsock.
-$ModLoad imuxsock # provides support for local system logging (e.g. via logger command)
-$ModLoad imjournal # provides access to the systemd journal
-#$ModLoad imklog # reads kernel messages (the same are read from journald)
-#$ModLoad immark  # provides --MARK-- message capability
+\$ModLoad imuxsock # provides support for local system logging (e.g. via logger command)
+\$ModLoad imjournal # provides access to the systemd journal
+#\$ModLoad imklog # reads kernel messages (the same are read from journald)
+#\$ModLoad immark  # provides --MARK-- message capability
 
 # Provides UDP syslog reception
-$ModLoad imudp
-$UDPServerRun 514
-$UDPServerAddress 127.0.0.1
+\$ModLoad imudp
+\$UDPServerRun 514
+\$UDPServerAddress 127.0.0.1
 
 # Provides TCP syslog reception
-#$ModLoad imtcp
-#$InputTCPServerRun 514
+#\$ModLoad imtcp
+#\$InputTCPServerRun 514
 
 
 #### GLOBAL DIRECTIVES ####
 
 # Where to place auxiliary files
-$WorkDirectory /var/lib/rsyslog
+\$WorkDirectory /var/lib/rsyslog
 
 # Use default timestamp format
-$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+\$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
 
 # File syncing capability is disabled by default. This feature is usually not required,
 # not useful and an extreme performance hit
-#$ActionFileEnableSync on
+#\$ActionFileEnableSync on
 
 # Include all config files in /etc/rsyslog.d/
-$IncludeConfig /etc/rsyslog.d/*.conf
+\$IncludeConfig /etc/rsyslog.d/*.conf
 
 # Turn off message reception via local log socket;
 # local messages are retrieved through imjournal now.
-$OmitLocalLogging on
+\$OmitLocalLogging on
 
 # File to store the position in the journal
-$IMJournalStateFile imjournal.state
+\$IMJournalStateFile imjournal.state
 
 
 #### RULES ####
@@ -175,11 +175,11 @@ local7.*                                                /var/log/boot.log
 #
 # An on-disk queue is created for this action. If the remote host is
 # down, messages are spooled to disk and sent when it is up again.
-#$ActionQueueFileName fwdRule1 # unique name prefix for spool files
-#$ActionQueueMaxDiskSpace 1g   # 1gb space limit (use as much as possible)
-#$ActionQueueSaveOnShutdown on # save messages to disk on shutdown
-#$ActionQueueType LinkedList   # run asynchronously
-#$ActionResumeRetryCount -1    # infinite retries if host is down
+#\$ActionQueueFileName fwdRule1 # unique name prefix for spool files
+#\$ActionQueueMaxDiskSpace 1g   # 1gb space limit (use as much as possible)
+#\$ActionQueueSaveOnShutdown on # save messages to disk on shutdown
+#\$ActionQueueType LinkedList   # run asynchronously
+#\$ActionResumeRetryCount -1    # infinite retries if host is down
 # remote host is: name/ip:port, e.g. 192.168.0.1:514, port optional
 #*.* @@remote-host:514
 # ### end of the forwarding rule ###
