@@ -222,35 +222,6 @@ Vagrant.configure(2) do | config |
 	# config.vm.box_check_update = false
 	# config.vm.network "forwarded_port", guest: 80, host: 8080
 
-	config.vm.define "haproxy", primary: true do | haproxy |
-		haproxy.vm.box = "centos/7"
-
-		#haproxy.vm.network "forwarded_port", guest: 80, host: 8080
-		haproxy.vm.network "private_network", ip: "192.168.10.100"
-
-		#haproxy.vm.synced_folder "haproxy", "/vagrant"
-
-		haproxy.vm.provision "shell", inline: <<-SERVER
-			echo "setting hostname=demo-haproxy"
-			echo "demo-haproxy" > /etc/hostname
-			echo "192.168.10.100 haproxy" >> /etc/hosts
-			echo "192.168.10.101 web1" >> /etc/hosts
-			echo "192.168.10.102 web2" >> /etc/hosts
-			echo "192.168.10.103 web3" >> /etc/hosts
-			hostname haproxy
-			ip addr
-		SERVER
-
-		haproxy.vm.provision "shell", inline: $server_script
-		#haproxy.vm.provider "virtualbox" do |vb|
-		#  # Display the VirtualBox GUI when booting the machine
-		#  vb.gui = true
-		#
-		#  # Customize the amount of memory on the VM:
-		#  vb.memory = "1024"
-		#end
-	end
-
 	config.vm.define "web1" do | web1 |
 		web1.vm.box = "centos/7"
 		web1.vm.network "private_network", ip: "192.168.10.101"
@@ -315,6 +286,35 @@ Vagrant.configure(2) do | config |
 		#  vb.gui = true
 		#
 		#   # Customize the amount of memory on the VM:
+		#  vb.memory = "1024"
+		#end
+	end
+
+	config.vm.define "haproxy", primary: true do | haproxy |
+		haproxy.vm.box = "centos/7"
+
+		#haproxy.vm.network "forwarded_port", guest: 80, host: 8080
+		haproxy.vm.network "private_network", ip: "192.168.10.100"
+
+		#haproxy.vm.synced_folder "haproxy", "/vagrant"
+
+		haproxy.vm.provision "shell", inline: <<-SERVER
+			echo "setting hostname=demo-haproxy"
+			echo "demo-haproxy" > /etc/hostname
+			echo "192.168.10.100 haproxy" >> /etc/hosts
+			echo "192.168.10.101 web1" >> /etc/hosts
+			echo "192.168.10.102 web2" >> /etc/hosts
+			echo "192.168.10.103 web3" >> /etc/hosts
+			hostname haproxy
+			ip addr
+		SERVER
+
+		haproxy.vm.provision "shell", inline: $server_script
+		#haproxy.vm.provider "virtualbox" do |vb|
+		#  # Display the VirtualBox GUI when booting the machine
+		#  vb.gui = true
+		#
+		#  # Customize the amount of memory on the VM:
 		#  vb.memory = "1024"
 		#end
 	end
