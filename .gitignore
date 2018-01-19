@@ -3,3 +3,5 @@
 *.box
 *.tar.gz
 *.swp
+*.log
+*.retry
