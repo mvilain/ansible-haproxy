@@ -1,6 +1,6 @@
 # ha-prox-demo -- alation demo for ha-prox
 
-## Michael Vilain <michael@vilain.com> 2017.017mev
+## Michael Vilain <michael@vilain.com> 2018.0128mev
 
 These notes are for the end-user of the demo and supply directions on how to setup a system to install the demo, install it from files or the Vagrant Hub, and how to run the demo.
 
@@ -8,13 +8,12 @@ These notes are for the end-user of the demo and supply directions on how to set
 
 ## Requirements on the demo system
 
-**Note**: the demo was developed on a Mac Pro with 12GB of memory and a 750GB SSD. Performance on smaller, lesser powered systems may vary. This has **not** been tested on Windows.
+**Note**: the demo was developed on a Mac Pro with 14GB of memory and a 750GB SSD. Performance on smaller, lesser powered systems may vary. This has **not** been tested on Windows.
 
-1. Install [Virtual Box from Oracle](https://www.virtualbox.org/wiki/Downloads) and the [extensions](http://download.virtualbox.org/virtualbox/5.1.22/VirtualBoxSDK-5.1.22-115126.zip)
-
+1. Install [Virtual Box from Oracle](https://www.virtualbox.org/wiki/Downloads) and the [extensions](https://download.virtualbox.org/virtualbox/5.2.6/Oracle_VM_VirtualBox_Extension_Pack-5.2.6-120293.vbox-extpack)
 2. [Download and install Vagrant](https://www.vagrantup.com/downloads.html)
-
-3. Create a directory for the demo (e.g. ~/alation)
+3. [Download and install Ansible](https://hvops.com/articles/ansible-mac-osx/)
+4. Create a directory for the demo (e.g. ~/alation)
 ```
 mkdir -p ~/alation 
 ```
@@ -37,8 +36,8 @@ at the command line.
 
 Vagrant will go through and start the haproxy server and three web clients, web1, web2, and web3.  
 
-* web1 will be running Apache on CentOS 7.2
-* web2 will be running nginx on CentOS 7.2
+* web1 will be running Apache on CentOS 7
+* web2 will be running nginx on CentOS 7
 * web3 will not be running a web server
 
 The last case is to test the configuration for the load balancer so that it will not direct traffic to a dead web service.
@@ -67,7 +66,7 @@ Current machine states:
 web1                   poweroff (virtualbox)
 web2                   poweroff (virtualbox)
 web3                   poweroff (virtualbox)
-haproxy                poweroff (virtualbox)
+haproxy1               poweroff (virtualbox)
 This environment represents multiple VMs. The VMs are all listed
 above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
