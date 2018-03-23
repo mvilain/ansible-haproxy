@@ -1,0 +1,14 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+	"settings":
+	{
+		"bold_folder_labels": true,
+		"tab_size": 2,
+		"hightlight_modified_tabs": true
+	}
+}
