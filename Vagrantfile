@@ -26,13 +26,13 @@ Vagrant.configure(2) do | config |
 	SHELLALL
 
 	# run ansible playbook on all nodes...node-specific stuff is in the playbook
-    config.vm.provision "ansible" do |ansible|
+	config.vm.provision "ansible" do |ansible|
 		ansible.compatibility_mode = "2.0"
 		ansible.playbook = "playbook-cent.yaml"
 		ansible.inventory_path = "./inventory"
 		# ansible.verbose = "v"
 		# ansible.raw_arguments = [""]
-    end
+	end
 
 	config.vm.define "web1" do | web1 | 
 		web1.vm.network 'private_network', ip: '192.168.10.101'
