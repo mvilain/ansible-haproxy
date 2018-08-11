@@ -13,15 +13,15 @@ These notes are for the end-user of the demo and supply directions on how to set
 1. Install [Virtual Box from Oracle](https://www.virtualbox.org/wiki/Downloads) and the [extensions](https://download.virtualbox.org/virtualbox/5.2.6/Oracle_VM_VirtualBox_Extension_Pack-5.2.6-120293.vbox-extpack)
 2. [Download and install Vagrant](https://www.vagrantup.com/downloads.html)
 3. [Download and install Ansible](https://hvops.com/articles/ansible-mac-osx/)
-4. Create a directory for the demo (e.g. ~/alation)
+4. Create a directory for the demo (e.g. ~/haproxy)
 ```
-mkdir -p ~/alation 
+mkdir -p ~/haproxy 
 ```
 
-4. Clone the repository with the Vagrant file into the alation directory
+4. Clone the repository with the Vagrant file into the haproxy directory
 
 ```
-git clone https://github.com/mvilain/alation.git
+git clone https://github.com/mvilain/haproxy.git
 ```
 
 ## Running the Demo

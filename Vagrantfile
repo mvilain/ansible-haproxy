@@ -1,8 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# alation Vagrant file to spin up multiple machines
-# Maintainer Michael Vilain [201801.26]
+# haproxy demo Vagrant file to spin up multiple machines
+# Maintainer Michael Vilain [201808.11]
 
 
 Vagrant.configure(2) do | config |
