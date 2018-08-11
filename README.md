@@ -1,4 +1,4 @@
-# ha-prox-demo -- alation demo for ha-prox
+# ha-prox-demo -- demo for ha-prox
 
 ## Michael Vilain <michael@vilain.com> 2018.0128mev
 
