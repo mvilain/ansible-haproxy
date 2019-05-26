@@ -10,7 +10,7 @@ Vagrant.configure(2) do | config |
 	# https://docs.vagrantup.com.
 
 	# config.vm.box = 'centos/7'
-	config.vm.box = 'geerlingguy/centos7'
+	config.vm.box = 'centos/7'
 	# config.vm.network 'forwarded_port', guest: 80, host: 8080
 	config.ssh.insert_key = false
 	config.vm.synced_folder '.', '/vagrant', disabled: false
