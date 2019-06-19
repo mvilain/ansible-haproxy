@@ -3,7 +3,7 @@
 [webservers]
 web1 ansible_host=192.168.10.101
 web2 ansible_host=192.168.10.102
-web3 ansible_host=192.168.10.103
+#web3 ansible_host=192.168.10.103
 
 [webservers:vars]
 # Variables for the web server configuration
@@ -16,11 +16,11 @@ repository=https://github.com/bennojoy/mywebapp.git
 # this is the sha1sum of V5 of the test webapp.
 webapp_version=351e47276cc66b018f4890a04709d4cc3d3edb0d
 
-[lbservers]
-haproxy1 ansible_host=192.168.10.100
+[lbrs]
+lbr1 ansible_host=192.168.10.100
 
-[lbservers:vars]
-# Variables for the load balencer server configuration
+[lbrs:vars]
+# Variables for the load balancer server configuration
 
 # HAProxy supports "http" and "tcp". For SSL, SMTP, etc, use "tcp".
 mode=http
@@ -29,7 +29,7 @@ mode=http
 listenport=80
 
 # A name for the proxy daemon, this wil be the suffix in the logs.
-daemonname=web-lb
+daemonname=haproxy
 
 # Balancing Algorithm. Available options:
 # roundrobin, source, leastconn, source, uri
@@ -39,7 +39,7 @@ balance=roundrobin
 # Group 'all' with all servers
 [all:children]
 webservers
-lbservers
+lbrs
 
 [all:vars]
 ansible_ssh_user=vagrant

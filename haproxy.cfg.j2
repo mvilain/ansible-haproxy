@@ -8,7 +8,7 @@ global
     chroot      /var/lib/haproxy
     pidfile     /var/run/haproxy.pid
     maxconn     4000                
-    user        root             #Haproxy running under user and group "root" b/c
+    user        root             # haproxy running under "root" because
     group       root             # Vagrant+virtual box won't forword port 80
     daemon
 
@@ -38,7 +38,7 @@ defaults
     maxconn                 3000
 
 listen stats
-    bind *:8181
+    bind *:81
     stats enable
     stats uri /
     stats realm Haproxy\ Statistics
@@ -53,7 +53,7 @@ listen stats
 # BackEnd 
 #---------------------------------------------------------------------
 backend http_back
-{% for host in groups.lbservers %}
+{% for host in groups.lbrs %}
 listen {{ daemonname }} 0.0.0.0:{{ listenport }}
 {% endfor %}
     balance {{ balance }}
