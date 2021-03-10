@@ -1,4 +1,4 @@
-# ha-prox-demo -- demo for ha-prox
+# haprox-demo -- demo for haprox load balancer
 
 ## Michael Vilain <michael@vilain.com> 201906.18mev
 
