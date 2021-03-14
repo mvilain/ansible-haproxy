@@ -1,6 +1,6 @@
 # haprox-demo -- demo for haprox load balancer
 
-## Michael Vilain <michael@vilain.com> 201906.18mev
+## Michael Vilain <michael@vilain.com> updated 20210314
 
 These notes are for the end-user of the demo and supply directions on how to 
 setup a system to install the demo, install it from files or the Vagrant Hub, 
@@ -15,7 +15,7 @@ Performance on smaller, lesser powered systems may vary. This has **not** been t
 on Windows.
 
 1. Install [Virtual Box from Oracle](https://www.virtualbox.org/wiki/Downloads) 
-and the [extensions](https://download.virtualbox.org/virtualbox/5.2.30/Oracle_VM_VirtualBox_Extension_Pack-5.2.30-130521.vbox-extpack)
+and the [extensions](https://download.virtualbox.org/virtualbox/6.1.18/Oracle_VM_VirtualBox_Extension_Pack-6.1.18.vbox-extpack)
 2. [Download and install Vagrant](https://www.vagrantup.com/downloads.html)
 3. [Download and install Ansible](https://hvops.com/articles/ansible-mac-osx/)
 4. Create a directory for the demo (e.g. ~/haproxy)
@@ -106,3 +106,8 @@ Note that if you `halt` VMs, then `vagrant start` them, they'll be in the same
 state as before they were halted. If any storage was allocated on any of the nodes, 
 it will be there when you restore the demo VMs unless you destroy and re-instatiate 
 new VMs.
+
+## Updates
+
+3/14/21 This project has been updated to reflect the most current version of virtualbox
+and to use ansible roles managed on github.

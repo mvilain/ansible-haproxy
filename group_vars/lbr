@@ -1,0 +1,6 @@
+# group_vars for lbr group
+---
+group_vars: "lbr"
+
+# override variables for load balancer server configuration in haproxy/defaults/main.yml
+
