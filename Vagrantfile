@@ -44,10 +44,10 @@ Vagrant.configure(2) do | config |
 		web2.vm.hostname = 'web2'
 	end
 
-# 	config.vm.define "web3" do | web3 |
-# 		web3.vm.network 'private_network', ip: '192.168.10.103'
-# 		web3.vm.hostname = 'web3'
-# 	end
+	config.vm.define "web3" do | web3 |
+		web3.vm.network 'private_network', ip: '192.168.10.103'
+		web3.vm.hostname = 'web3'
+	end
 
 	config.vm.define "lbr1", primary: true do | lbr1 |
 		lbr1.vm.network 'private_network', ip: '192.168.10.100'
